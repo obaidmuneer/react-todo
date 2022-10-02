@@ -1,5 +1,6 @@
 import { useState } from "react";
 import './App.css';
+import List from "./components/list";
 
 function App() {
   const [todos, setTodos] = useState([])
@@ -9,6 +10,9 @@ function App() {
 
   let add = (e) => {
     e.preventDefault()
+   if (!item) {
+     return
+   }
     setTodos([...todos, item])
     setItems('')
   }
@@ -20,7 +24,7 @@ function App() {
   let update = (e) => {
     e.preventDefault()
     let editedItem = [...todos]
-    editedItem[id] = item 
+    editedItem[id] = item
     setTodos(editedItem)
     setBtnText('Add')
     setItems('')
@@ -33,22 +37,29 @@ function App() {
     setTodos(updatedTodos)
   }
   return (
-    <div className="App">
-      <form onSubmit={(id > -1) ? update : add} >
-        <span>Todo : </span><input onChange={(e) => setItems(e.target.value)} value={item} type="text" />
-        <button type="submit">{btnText}</button>
-      </form>
-      <ul>
-        {
-          todos.map((item, index) => {
-            return <li key={index}>
-              <span>{item}</span>
-              <button onClick={() => edit(index)}>Edit</button>
-              <button onClick={() => del(index)} >Delete</button>
-            </li>
-          })
-        }
-      </ul>
+    <div className="container">
+      <div class="header">
+        <h2>Simple Todo App</h2>
+      </div>
+      <div className="body">
+        <form onSubmit={(id > -1) ? update : add} >
+          <input className="item" onChange={(e) => setItems(e.target.value)} value={item} type="text" />
+          <button className="btn add itemButton" type="submit">{btnText}</button>
+        </form>
+        <ul>
+          {
+            todos.map((item, index) => {
+              return <List
+                key={index}
+                id={index}
+                text={item}
+                onEdit={edit}
+                onDel={del}
+              />
+            })
+          }
+        </ul>
+      </div>
     </div>
   );
 }
