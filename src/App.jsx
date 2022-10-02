@@ -2,15 +2,11 @@ import { useState } from "react";
 import './App.css';
 
 function App() {
-
   const [todos, setTodos] = useState([])
   const [item, setItems] = useState('')
   const [btnText, setBtnText] = useState('Add')
-  const [id, setId] = useState('')
+  const [id, setId] = useState(-1)
 
-  let itemValue = (value) => {
-    setItems(value)
-  }
   let add = (e) => {
     e.preventDefault()
     setTodos([...todos, item])
@@ -28,6 +24,7 @@ function App() {
     setTodos(editedItem)
     setBtnText('Add')
     setItems('')
+    setId(-1)
   }
   let del = (i) => {
     let updatedTodos = todos.filter((item, index) => {
@@ -35,11 +32,10 @@ function App() {
     })
     setTodos(updatedTodos)
   }
-
   return (
     <div className="App">
       <form onSubmit={(id > -1) ? update : add} >
-        <span>Todo : </span><input onChange={(e) => itemValue(e.target.value)} value={item} type="text" />
+        <span>Todo : </span><input onChange={(e) => setItems(e.target.value)} value={item} type="text" />
         <button type="submit">{btnText}</button>
       </form>
       <ul>
