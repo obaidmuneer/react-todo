@@ -6,23 +6,33 @@ function App() {
   const [todos, setTodos] = useState([])
   const [item, setItems] = useState('')
   const [course, setCourse] = useState('')
+  const [courseId, setCourseId] = useState('')
+  const [courseItems, setCourseItems] = useState([])
   const [btnText, setBtnText] = useState('Add')
   const [id, setId] = useState(-1)
 
-  useEffect(() => {
-    if (localStorage.getItem('course')) {
-      setCourse(localStorage.getItem('course'))
-    }
-    return
-  }, [])
+  // useEffect(() => {
+  //   if (localStorage.getItem('course')) {
+  //     setCourse(localStorage.getItem('course'))
+  //   }
+  // }, [])
 
   let addCourse = (e) => {
     e.preventDefault()
     if (!course) {
       return
     }
-    // console.log(course);
-    localStorage.setItem('course', course)
+    for (let i = 0; i < todos.length; i++) {
+      const element = todos[i];
+      if (element.hasOwnProperty(course)) {
+        setCourseItems(element[course].item)
+        setCourseId(i)
+        return
+      }
+    }
+    setTodos([...todos, { [course]: { item: [] } }])
+    setCourseItems([])
+    // localStorage.setItem('course', course)
   }
 
   let add = (e) => {
@@ -30,33 +40,42 @@ function App() {
     if (!item) {
       return
     }
-    setTodos([...todos, { course, text: item }])
-    console.log(todos);
+    let data = todos
+    for (let i = 0; i < data.length; i++) {
+      const element = data[i];
+      if (element.hasOwnProperty(course)) {
+        element[course].item.push(item)
+        setCourseId(i)
+        setCourseItems(element[course].item)
+      }
+    }
+    setTodos(data)
     setItems('')
   }
   let edit = (i) => {
-    console.log(todos);
-    console.log(i);
-    // setItems(todos[i].text)
-    // setBtnText('Update')
-    // setId(i)
+    setItems(todos[courseId][course].item[i])
+    setBtnText('Update')
+    setId(i)
   }
   let update = (e) => {
     e.preventDefault()
     let editedItem = [...todos]
-    // console.log(editedItem[id].text);
-    editedItem[id].text = item
+    editedItem[courseId][course].item[id] = item
     setTodos(editedItem)
     setBtnText('Add')
     setItems('')
     setId(-1)
   }
   let del = (i) => {
-    let updatedTodos = todos.filter((item, index) => {
+    let updatedItem = todos
+    let updatedTodos = courseItems.filter((item, index) => {
       return index !== i
     })
-    setTodos(updatedTodos)
+    updatedItem[courseId][course].item = updatedTodos
+    setCourseItems(updatedTodos)
+    setTodos(updatedItem)
   }
+
   return (
     <div className="container">
       <div className="header">
@@ -64,7 +83,7 @@ function App() {
       </div>
       <div className="body">
         <form onSubmit={addCourse}>
-          <input className="item" onChange={(e) => setCourse(e.target.value)} value={course} type="text" />
+          <input className="item" onChange={(e) => setCourse(e.target.value)} value={course} type="text" autoFocus />
           <button className="btn add itemButton" type="submit">Add Course</button>
         </form><br />
         <form onSubmit={(id > -1) ? update : add}>
@@ -73,26 +92,15 @@ function App() {
         </form>
         <ul>
           {
-            todos.filter((item, index) => {
-              return item.course === course
-            }).map((item, index) => {
+            courseItems.map((item, index) => {
               return <List
                 key={index}
                 id={index}
-                text={item.text}
+                text={item}
                 onEdit={edit}
                 onDel={del}
               />
             })
-            // selectedCourse.map((item, index) => {
-            //   return <List
-            //     key={index}
-            //     id={index}
-            //     text={item.text}
-            //     onEdit={edit}
-            //     onDel={del}
-            //   />
-            // })
           }
         </ul>
       </div>
