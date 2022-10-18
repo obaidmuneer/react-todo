@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import './App.css';
 import List from "./components/list";
 
@@ -10,12 +10,6 @@ function App() {
   const [courseItems, setCourseItems] = useState([])
   const [btnText, setBtnText] = useState('Add')
   const [id, setId] = useState(-1)
-
-  // useEffect(() => {
-  //   if (localStorage.getItem('course')) {
-  //     setCourse(localStorage.getItem('course'))
-  //   }
-  // }, [])
 
   let addCourse = (e) => {
     e.preventDefault()
